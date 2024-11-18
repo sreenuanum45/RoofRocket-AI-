@@ -166,7 +166,13 @@ public class UsersTest extends BaseClass {
         if (usersCount == deletecount) {
             int n = 0;
             for (WebElement ele : usersPage.getDeleteButton()) {
-                ele.click();
+              try {
+                  driver.executeScript("arguments[0].scrollIntoView();", ele);
+                  driver.executeScript("arguments[0].click();", ele);
+              }catch (StaleElementReferenceException e){
+                  fluentWait(ele, Constants.timeout, Constants.pollingTime);
+              }
+             fluentWait(ele, Constants.timeout, Constants.pollingTime).click();
                 usersPage.clickYesButtonToDelete();
                 if (usersPage.isOneUserDeletedSuccessMessageDisplayed()) {
                     String msg = usersPage.getOneUserDeletedSuccessMessage();
