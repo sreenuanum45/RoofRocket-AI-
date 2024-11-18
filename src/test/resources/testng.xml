@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="All Test Suite">
+    <test verbose="2" preserve-order="true" name="D:/Myprojects/RoofRocketAI/src/test/java/tests/UsersTest.java">
+        <classes>
+            <class name="tests.UsersTest">
+                <methods><include name="VerifyUsersTest"/>
+                    <include name="VerifyAddUserTest"/>
+                    <include name="VerifyDeleteUserTestWithSingleUserDelete"/>
+                    <include name="VerifyDeleteUserTestWithMultipleUserDelete"/>
+                    <include name="VerifyEditUserTestByOnlyOneUser"/>
+                    <include name="VerifyEditUserTestByMultipleUser"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+</suite>
