@@ -130,7 +130,7 @@ Assert.assertEquals(copyWritingPage.getHeaderMsg(),"Ad Copywriting","Successfull
         Assert.assertEquals(copyWritingPage.getHeaderMsg(),"Ad Copywriting","Successfully able to navigate to Ad Copywriting page");
     }
     //Email Writing
-    @Test(priority = 11)
+    @Test(priority = 11/*,retryAnalyzer = utilities.RetryAnalyzer.class*/)
     public void  VerifyEmailWritingTest() throws ElementClickInterceptedException, IOException, InterruptedException {
         researchPage.clickEmailWritingLink();
         String tone=getRandomOption( emailPage.getToneAndStyleOptions());
@@ -138,7 +138,7 @@ Assert.assertEquals(copyWritingPage.getHeaderMsg(),"Ad Copywriting","Successfull
         Assert.assertEquals(emailPage.getHeaderMsg(),"Email Writing","Successfully able to navigate to Email Writing page");
         System.out.println(driver.getTitle());
     }
-    @Test(priority = 12)
+    @Test(priority = 12/*,retryAnalyzer = utilities.RetryAnalyzer.class*/)
     public void  VerifyEmailWritingTestWithoutData() throws ElementClickInterceptedException, IOException, InterruptedException {
         researchPage.clickEmailWritingLink();
         String tone=getRandomOption( emailPage.getToneAndStyleOptions());
@@ -174,10 +174,10 @@ Faker faker = new Faker();
         int randomIndex = rand.nextInt(options.size());
         return options.get(randomIndex).getText();
     }
-  /*  @AfterMethod
+    @AfterMethod
     public void tearDown() {
         if (driver != null) {
             driver.quit();
         }
-    }*/
+    }
 }

@@ -1,4 +1,4 @@
-package utilities.Utility;
+package utilities.WebsiteUtlity;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;

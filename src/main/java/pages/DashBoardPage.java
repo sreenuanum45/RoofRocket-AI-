@@ -33,7 +33,8 @@ public class DashBoardPage {
                 "Reports generated",
                 "Email sent",
                 "Reports Seen By Porspect",
-                "Potential Value of Collected Leads"
+                "Potential Value of\n" +
+                        "Collected Leads"
         );
         // Find elements on the dashboard
         List<WebElement> elements =waitUtilities.fluentWait(dashboardItems, Constants.timeout, Constants.pollingTime);

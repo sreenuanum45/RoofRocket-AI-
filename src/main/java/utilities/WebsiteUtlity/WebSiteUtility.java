@@ -1,4 +1,4 @@
-package utilities.Utility;
+package utilities.WebsiteUtlity;
 
 import com.google.common.io.Files;
 import org.openqa.selenium.OutputType;

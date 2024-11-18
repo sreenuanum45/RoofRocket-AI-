@@ -1,4 +1,4 @@
-package utilities.Utility;
+package utilities.WebsiteUtlity;
 
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;

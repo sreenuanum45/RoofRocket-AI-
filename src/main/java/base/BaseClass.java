@@ -1,5 +1,7 @@
 package base;
 
+import org.openqa.selenium.ElementClickInterceptedException;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -10,6 +12,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.support.ui.Wait;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -97,6 +100,30 @@ public class BaseClass {
                 return element;
             }
         });
+    }
+    public static void waitForElementToBeClickable(RemoteWebDriver driver, WebElement element) {
+        Wait<RemoteWebDriver> wait = new FluentWait<>(driver)
+                .withTimeout(Duration.ofSeconds(30))    // Max wait time
+                .pollingEvery(Duration.ofSeconds(5))    // Frequency of polling
+                .ignoring(TimeoutException.class)       // Ignore TimeoutException
+                .ignoring(ElementClickInterceptedException.class); // Ignore the ElementClickInterceptedException
+
+        try {
+            wait.until(new Function<WebDriver, WebElement>() {
+                public WebElement apply(WebDriver driver) {
+                    // Attempt to click the element once it is clickable
+                    if (element.isDisplayed() && element.isEnabled()) {
+                        element.click();
+                        return element;
+                    }
+                    return null;
+                }
+            });
+        } catch (ElementClickInterceptedException e) {
+            // Handle specific scenario for element click interception
+            System.out.println("Element is intercepted by another element. Retrying...");
+            // You can add additional logic here to handle retry or log the issue
+        }
     }
 
     public WebElement fluentWaitForElement(WebElement element, int timeout, int pollingTime) {

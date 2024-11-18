@@ -1,10 +1,13 @@
 package utilities;
 
+import org.openqa.selenium.ElementClickInterceptedException;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
+import org.openqa.selenium.support.ui.Wait;
 
 import java.time.Duration;
 import java.util.List;
@@ -15,6 +18,30 @@ public class WaitUtilities {
 
     public WaitUtilities(RemoteWebDriver driver) {
         this.driver = driver;
+    }
+    public  void waitForElementToBeClickable(RemoteWebDriver driver, WebElement element) {
+        Wait<RemoteWebDriver> wait = new FluentWait<>(driver)
+                .withTimeout(Duration.ofSeconds(30))    // Max wait time
+                .pollingEvery(Duration.ofSeconds(5))    // Frequency of polling
+                .ignoring(TimeoutException.class)       // Ignore TimeoutException
+                .ignoring(ElementClickInterceptedException.class); // Ignore the ElementClickInterceptedException
+
+        try {
+            wait.until(new Function<WebDriver, WebElement>() {
+                public WebElement apply(WebDriver driver) {
+                    // Attempt to click the element once it is clickable
+                    if (element.isDisplayed() && element.isEnabled()) {
+                        element.click();
+                        return element;
+                    }
+                    return null;
+                }
+            });
+        } catch (ElementClickInterceptedException e) {
+            // Handle specific scenario for element click interception
+            System.out.println("Element is intercepted by another element. Retrying...");
+            // You can add additional logic here to handle retry or log the issue
+        }
     }
 
     public WebElement fluentWait(WebElement element, int timeout, int pollingTime) {

@@ -1,8 +1,13 @@
 package utilities;
 
 import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import com.aventstack.extentreports.reporter.configuration.Theme;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebElement;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,6 +16,10 @@ import java.util.Properties;
 
 public class MyExtentReport {
 
+    private static ExtentReports extentReport;
+    private static ExtentSparkReporter sparkReporter;
+
+    // Initialize and configure the Extent Report
     public static ExtentReports generateExtentReport() throws IOException {
         // Set up the report path using the correct separator for the OS
         String reportPath = System.getProperty("user.dir") + File.separator + "test-output" + File.separator + "ExtendReport" + File.separator + "extent.html";
@@ -22,10 +31,10 @@ public class MyExtentReport {
         }
 
         // Create an ExtentReports object
-        ExtentReports extentReport = new ExtentReports();
+        extentReport = new ExtentReports();
 
         // Set up the SparkReporter for generating the HTML report
-        ExtentSparkReporter sparkReporter = new ExtentSparkReporter(reportPath);
+        sparkReporter = new ExtentSparkReporter(reportPath);
         sparkReporter.config().setTheme(Theme.STANDARD);
         sparkReporter.config().setDocumentTitle("RoofRocketAI Report");
         sparkReporter.config().setReportName("RoofRocketAI Test Report");
@@ -57,14 +66,75 @@ public class MyExtentReport {
         return extentReport;
     }
 
+    // Create a new test in the report
+    public static ExtentTest createTest(String testName, String description) {
+        ExtentTest test = extentReport.createTest(testName, description);
+        return test;
+    }
+
+    // Capture a screenshot for failed tests
+    public static String captureScreenshot(WebDriver driver, String screenshotName) {
+        // Capture screenshot
+        File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+
+        // Define the path to save the screenshot
+        String screenshotPath = System.getProperty("user.dir") + File.separator + "test-output" + File.separator + "screenshots" + File.separator + screenshotName + ".png";
+
+        // Create the destination file
+        File destination = new File(screenshotPath);
+
+        try {
+            // Copy the screenshot to the destination
+            org.apache.commons.io.FileUtils.copyFile(screenshot, destination);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return screenshotPath;
+    }
+
+    // Add logs to the report
+    public static void logTestStatus(ExtentTest test, String status, String message, WebDriver driver) {
+        switch (status.toUpperCase()) {
+            case "PASS":
+                test.pass(message);
+                break;
+            case "FAIL":
+                // If the test fails, capture the screenshot and add it to the report
+                String screenshotPath = captureScreenshot(driver, "FailedTest_" + System.currentTimeMillis());
+                test.fail(message).addScreenCaptureFromPath(screenshotPath);
+                break;
+            case "SKIP":
+                test.skip(message);
+                break;
+            default:
+                test.info(message);
+                break;
+        }
+    }
+
+    // Finalize the report
+    public static void finalizeReport() {
+        extentReport.flush();
+        System.out.println("Extent report generated successfully!");
+    }
+
     public static void main(String[] args) {
         try {
             // Generate the report
             ExtentReports extentReport = generateExtentReport();
 
+            // Example of creating a test and logging
+            ExtentTest test = createTest("Login Test", "Verify the login functionality");
+
+            // Simulate a passing test
+            logTestStatus(test, "PASS", "Login test passed successfully!", null);
+
+            // Simulate a failed test (take screenshot on failure)
+            logTestStatus(test, "FAIL", "Login test failed! Screenshot captured.", null);  // Pass your WebDriver instance
+
             // Finalize the report
-            extentReport.flush();
-            System.out.println("Extent report generated successfully!");
+            finalizeReport();
         } catch (IOException e) {
             System.err.println("Failed to generate the extent report: " + e.getMessage());
         }

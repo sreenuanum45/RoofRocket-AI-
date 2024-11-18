@@ -6,10 +6,13 @@ import constants.Constants;
 import org.openqa.selenium.*;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import pages.*;
-import utilities.Utility.WebTableUtility;
+import utilities.ExcelReader;
+import utilities.WebsiteUtlity.WebTableUtility;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -158,7 +161,7 @@ public class UsersTest extends BaseClass {
         }
     }
 
-    @Test(priority = 4)
+    @Test(priority = 4/*,retryAnalyzer = utilities.RetryAnalyzer.class*/)
     public void VerifyDeleteUserTestWithMultipleUserDelete() throws ElementClickInterceptedException, IOException, InterruptedException {
         researchPage.clickUsersLink();
         int usersCount = webTableUtility.getRows(usersPage.getTable()).size();
@@ -171,6 +174,13 @@ public class UsersTest extends BaseClass {
                   driver.executeScript("arguments[0].click();", ele);
               }catch (StaleElementReferenceException e){
                   fluentWait(ele, Constants.timeout, Constants.pollingTime);
+              }
+              try {
+
+                  fluentWaitForElement(ele, Constants.timeout, Constants.pollingTime);
+                  waitForElementToBeClickable(driver, ele);
+              }catch (TimeoutException e){
+                  System.out.println("Element did not become stale within the timeout period. Proceeding with a direct click.");
               }
              fluentWait(ele, Constants.timeout, Constants.pollingTime).click();
                 usersPage.clickYesButtonToDelete();
@@ -261,6 +271,20 @@ public class UsersTest extends BaseClass {
             System.out.println("edit count is " + n);
             Assert.assertEquals(n, editcount);
         }
+    }
+    @AfterMethod
+
+    public void tearDown() {
+        if (driver != null) {
+            driver.quit();
+        }
+        else {
+            System.out.println("Driver is null");
+        }
+    }
+    @DataProvider(name = "excelData")
+    public Object[][] getExcelData() {
+        return ExcelReader.readExcelData("D:\\Myprojects\\RoofRocketAI\\src\\test\\resources\\testdata\\web_table_data.csv","UserData");
     }
 }
 
