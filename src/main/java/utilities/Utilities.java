@@ -57,7 +57,7 @@ public class Utilities {
     }
     // Capture a screenshot
     public static String captureScreenshot(RemoteWebDriver driver, String testName) {
-        String screenshotPath = System.getProperty("user.dir") + "/test-output/Screenshots/" + testName + ".png";
+        String screenshotPath = System.getProperty("user.dir") + File.separator + "screenshots" + File.separator + testName + ".png";
         File srcFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
         File destFile = new File(screenshotPath);
 

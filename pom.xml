@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.RoofRocketAI</groupId>
-    <artifactId>RoofRocketAI</artifactId>
+    <artifactId>fitpeo</artifactId>
     <version>1.0-SNAPSHOT</version>
     <dependencies>
         <!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java -->
@@ -20,8 +20,9 @@
             <artifactId>atu-testrecorder</artifactId>
             <version>2.1</version>
             <scope>system</scope>
-            <systemPath>D:/batch264/264pratice/src/test/resources/ATUTestRecorder_2.1.jar</systemPath>
+            <systemPath>${project.basedir}/src/test/resources/ATUTestRecorder_2.1.jar</systemPath>
         </dependency>
+
         <dependency>
             <groupId>commons-configuration</groupId>
             <artifactId>commons-configuration</artifactId>
@@ -111,7 +112,6 @@
             <artifactId>ashot</artifactId>
             <version>1.5.4</version>
         </dependency>
-
     </dependencies>
     <build>
         <plugins>
@@ -128,14 +128,48 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.1.2</version>
-                <configuration>
-                    <suiteXmlFiles>
-                        <suiteXmlFile>${project.basedir}/src/test/resources/testng.xml</suiteXmlFile>
-                    </suiteXmlFiles>
-                </configuration>
+                <executions>
+                    <execution>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <suiteXmlFiles>
+                                <!-- Default TestNG XML file -->
+                                <suiteXmlFile>${project.basedir}/src/test/resources/testng.xml</suiteXmlFile>
+                            </suiteXmlFiles>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>testng-profile</id>
+            <properties>
+                <!-- Specify the path to the TestNG XML file for this profile -->
+                <testng.xml>${project.basedir}/src/test/resources/testng.xml</testng.xml>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>3.1.2</version>
+                        <configuration>
+                            <suiteXmlFiles>
+                                <suiteXmlFile>${testng.xml}</suiteXmlFile>
+                            </suiteXmlFiles>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>

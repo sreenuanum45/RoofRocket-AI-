@@ -5,8 +5,9 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.events.WebDriverEventListener; // Correct import for the WebDriverEventListener
+import org.openqa.selenium.support.events.WebDriverListener;
 
-public class MyRemoteWebdriverListener implements WebDriverEventListener {
+public class MyRemoteWebdriverListener implements WebDriverListener {
 
     // Alert events
     @Override

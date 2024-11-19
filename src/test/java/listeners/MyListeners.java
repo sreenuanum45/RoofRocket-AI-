@@ -14,7 +14,7 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
-public class MyListeners implements ITestListener {
+public class MyListeners implements ITestListener  {
     ExtentReports extentReport;
     ExtentTest extentTest;
     public RemoteWebDriver driver;
@@ -39,14 +39,18 @@ public class MyListeners implements ITestListener {
         } catch (IllegalAccessException | NoSuchFieldException e) {
             throw new RuntimeException(e);
         }
+
         destinationScreenshot= Utilities.captureScreenshot(driver, result.getName());
         extentTest.addScreenCaptureFromPath(destinationScreenshot);
         extentTest.log(Status.INFO,result.getThrowable());
         extentTest.log(Status.FAIL, result.getName()+"got Failed");
+
+
     }
 
     @Override
     public void onTestSkipped(ITestResult result) {
+
         extentTest.log(Status.INFO,result.getThrowable());
         extentTest.log(Status.SKIP, result.getName()+" is Skipped");
     }
@@ -60,6 +64,10 @@ public class MyListeners implements ITestListener {
 
     @Override
     public void onTestFailedWithTimeout(ITestResult result) {
+        extentTest.log(Status.INFO,result.getThrowable());
+        extentTest.log(Status.FAIL, result.getName()+"got onTestFailedWithTimeout");
+        extentTest.addScreenCaptureFromPath(Utilities.captureScreenshot(driver, result.getName()));
+
 
     }
 
@@ -76,7 +84,8 @@ public class MyListeners implements ITestListener {
     public void onFinish(ITestContext context) {
         extentReport.flush();
         try {
-            Desktop.getDesktop().browse(new File(System.getProperty("user.dir")+"\\test-output\\ExtendReport\\extent.html").toURI());
+            System.out.println(System.getProperty("user.dir")+"/src/main/java/reports/ExtendReport/extent.html");
+            Desktop.getDesktop().browse(new File(System.getProperty("user.dir")+"/src/main/java/reports/ExtendReport/extent.html").toURI());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

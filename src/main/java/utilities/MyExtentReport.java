@@ -4,15 +4,17 @@ import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import com.aventstack.extentreports.reporter.configuration.Theme;
+
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebElement;
+
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
+
 
 public class MyExtentReport {
 
@@ -21,46 +23,56 @@ public class MyExtentReport {
 
     // Initialize and configure the Extent Report
     public static ExtentReports generateExtentReport() throws IOException {
+
         // Set up the report path using the correct separator for the OS
-        String reportPath = System.getProperty("user.dir") + File.separator + "test-output" + File.separator + "ExtendReport" + File.separator + "extent.html";
+        String reportPath = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator + "java" + File.separator
+                + "reports" + File.separator + "ExtendReport" + File.separator + "extent.html";
 
         // Create the report directory if it doesn't exist
         File reportDir = new File(reportPath).getParentFile();
         if (!reportDir.exists()) {
             reportDir.mkdirs();  // Creates directories if they don't exist
+        } else if (reportDir.isDirectory() && reportDir.list().length > 0) {
+            org.apache.commons.io.FileUtils.cleanDirectory(reportDir);
+        } else {
+            org.apache.commons.io.FileUtils.forceDelete(reportDir);
         }
-
         // Create an ExtentReports object
         extentReport = new ExtentReports();
-
         // Set up the SparkReporter for generating the HTML report
         sparkReporter = new ExtentSparkReporter(reportPath);
         sparkReporter.config().setTheme(Theme.STANDARD);
-        sparkReporter.config().setDocumentTitle("RoofRocketAI Report");
-        sparkReporter.config().setReportName("RoofRocketAI Test Report");
+        sparkReporter.config().setDocumentTitle("fitpeo Report");
+        sparkReporter.config().setReportName("fitpeo Test Report");
         sparkReporter.config().setTimeStampFormat("dd-MM-yyyy HH:mm:ss");
         sparkReporter.config().setEncoding("utf-8");
+        sparkReporter.config().enableOfflineMode(true);
+        sparkReporter.getReportObserver().onComplete();
+        sparkReporter.filter().statusFilter().getConfigurer().statusFilter().getConfigurer().reporter();
+        sparkReporter.config().getOfflineMode();
+        sparkReporter.getExecuted().getAndSet(true);
+
 
         // Attach the reporter to the ExtentReports instance
         extentReport.attachReporter(sparkReporter);
-
         // Load the configuration properties
         Properties config = new Properties();
-        File configFile = new File(System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator + "java" + File.separator + "com" + File.separator + "org" + File.separator + "myproject" + File.separator + "qa" + File.separator + "config" + File.separator + "config.properties");
-
+        File configFile = new File(System.getProperty("user.dir") + "/src/main/java/config/config-"+ getEnv() +".properties");
         try (FileInputStream fis = new FileInputStream(configFile)) {
             config.load(fis);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         // Add system info to the report
         extentReport.setSystemInfo("Application URL", config.getProperty("url"));
         extentReport.setSystemInfo("Browser Name", config.getProperty("browserName"));
-        extentReport.setSystemInfo("Username", config.getProperty("validEmail"));
+        extentReport.setSystemInfo("Username", config.getProperty("Email"));
         extentReport.setSystemInfo("OS", System.getProperty("os.name"));
         extentReport.setSystemInfo("Java Version", System.getProperty("java.version"));
         extentReport.setSystemInfo("OS Version", System.getProperty("os.version"));
+        extentReport.setSystemInfo("Environment", config.getProperty("environment"));
+        extentReport.setSystemInfo("Browser Version", config.getProperty("browserVersion"));
+
 
         // Return the ExtentReports object for use in your tests
         return extentReport;
@@ -78,7 +90,7 @@ public class MyExtentReport {
         File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
 
         // Define the path to save the screenshot
-        String screenshotPath = System.getProperty("user.dir") + File.separator + "test-output" + File.separator + "screenshots" + File.separator + screenshotName + ".png";
+        String screenshotPath = System.getProperty("user.dir")+ File.separator + "screenshots" + File.separator+ screenshotName + ".png";
 
         // Create the destination file
         File destination = new File(screenshotPath);
@@ -107,6 +119,15 @@ public class MyExtentReport {
             case "SKIP":
                 test.skip(message);
                 break;
+            case "INFO":
+                test.info(message);
+                break;
+            case "WARNING":
+                test.warning(message);
+                break;
+            case "FATAL":
+                test.addScreenCaptureFromPath(message);
+                break;
             default:
                 test.info(message);
                 break;
@@ -123,20 +144,26 @@ public class MyExtentReport {
         try {
             // Generate the report
             ExtentReports extentReport = generateExtentReport();
-
             // Example of creating a test and logging
-            ExtentTest test = createTest("Login Test", "Verify the login functionality");
-
+            ExtentTest test = createTest("Fitpeo Test", "Fitpeo testing");
             // Simulate a passing test
             logTestStatus(test, "PASS", "Login test passed successfully!", null);
-
             // Simulate a failed test (take screenshot on failure)
-            logTestStatus(test, "FAIL", "Login test failed! Screenshot captured.", null);  // Pass your WebDriver instance
-
+            logTestStatus(test, "FAIL", "Login test failed! Screenshot captured.", null);
+            // Pass your WebDriver instance
             // Finalize the report
             finalizeReport();
+
         } catch (IOException e) {
             System.err.println("Failed to generate the extent report: " + e.getMessage());
         }
+    }
+    private static String getEnv() {
+        String env = System.getProperty("env");
+        if (env == null || env.isEmpty()) {
+            env = "dev"; // default environment
+        }
+
+        return env;
     }
 }
