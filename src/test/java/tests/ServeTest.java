@@ -145,9 +145,6 @@ Assert.assertEquals(copyWritingPage.getHeaderMsg(),"Ad Copywriting","Successfull
         emailPage.fillEmailForm("","",tone);
         Assert.assertEquals(emailPage.getHeaderMsg(),"Email Writing","Successfully able to navigate to Email Writing page");
     }
-
-
-
     @DataProvider(name = "gmbData")
     public Object[][] getGMBData() {
 Faker faker = new Faker();
