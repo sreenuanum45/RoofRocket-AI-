@@ -46,8 +46,6 @@ public class DashBoardTest extends BaseClass {
         if (driver != null) {
             driver.quit();
         }
-        else {
-            System.out.println("Driver is null");
-        }
+
     }
 }

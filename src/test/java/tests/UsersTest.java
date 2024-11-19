@@ -278,9 +278,7 @@ public class UsersTest extends BaseClass {
         if (driver != null) {
             driver.quit();
         }
-        else {
-            System.out.println("Driver is null");
-        }
+
     }
     @DataProvider(name = "excelData")
     public Object[][] getExcelData() {

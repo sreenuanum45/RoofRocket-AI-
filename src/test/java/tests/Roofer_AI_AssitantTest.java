@@ -85,9 +85,7 @@ public class Roofer_AI_AssitantTest extends BaseClass {
         if (driver != null) {
             driver.quit();
         }
-        else {
-            System.out.println("Driver is null");
-        }
+
     }
 
     public String generateRandomPhoneNumber(int length) {
